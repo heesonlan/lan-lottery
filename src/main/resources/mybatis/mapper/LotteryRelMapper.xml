@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lan.lottery.mapper.LotteryRelMapper" >
+  <resultMap id="BaseResultMap" type="com.lan.lottery.model.LotteryRel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="awards_id" property="awardsId" jdbcType="INTEGER" />
+    <result column="awards" property="awards" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="topic" property="topic" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, user_name, awards_id, awards, create_time, update_time, topic
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_lottery_rel
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_lottery_rel
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.lan.lottery.model.LotteryRel" >
+    insert into t_lottery_rel (id, user_id, user_name, 
+      awards_id, awards, create_time, 
+      update_time, topic)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, 
+      #{awardsId,jdbcType=INTEGER}, #{awards,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{topic,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lan.lottery.model.LotteryRel" >
+    insert into t_lottery_rel
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="awardsId != null" >
+        awards_id,
+      </if>
+      <if test="awards != null" >
+        awards,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="topic != null" >
+        topic,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="awardsId != null" >
+        #{awardsId,jdbcType=INTEGER},
+      </if>
+      <if test="awards != null" >
+        #{awards,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="topic != null" >
+        #{topic,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lan.lottery.model.LotteryRel" >
+    update t_lottery_rel
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="awardsId != null" >
+        awards_id = #{awardsId,jdbcType=INTEGER},
+      </if>
+      <if test="awards != null" >
+        awards = #{awards,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="topic != null" >
+        topic = #{topic,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lan.lottery.model.LotteryRel" >
+    update t_lottery_rel
+    set user_id = #{userId,jdbcType=INTEGER},
+      user_name = #{userName,jdbcType=VARCHAR},
+      awards_id = #{awardsId,jdbcType=INTEGER},
+      awards = #{awards,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      topic = #{topic,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+
+
+
+
+
+
+
+
+
+  <!-- *************************************************************************************** -->
+  <select id="findByAwards" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from t_lottery_rel
+    where awards_id = #{awardsId,jdbcType=INTEGER}
+  </select>
+  <select id="findWinnerForExport" resultType="com.lan.lottery.vo.LotteryWinnerExportVo">
+    select t1.user_name as userName , t1.real_name as realName , t1.work_no as workNo , t3.awards , t3.prize,
+           t1.city, t1.o3, t1.o4, t1.o5 from t_lottery_user t1
+           left join t_lottery_rel t2 on t1.id=t2.user_id
+           left join t_lottery_awards t3 on t2.awards_id =t3.id
+    where t3.id = #{awardsId,jdbcType=INTEGER}
+    order by t1.user_name
+  </select>
+</mapper>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>幸运大抽奖</title>
+    <link rel="stylesheet" href="/css/bulma-0.9.4/bulma.min.css">
+    <script src="/js/jquery.min.js"></script>
+    <link rel="stylesheet" href="/css/lottery.css">
+</head>
+
+<body>
+<div class="tile is-ancestor">
+    <div class="tile is-vertical is-12">
+        <div class="tile" id="top-panel">
+            <article class="tile is-child notification">
+<!--                <img id="img-logo" src="/img/lottery/logo.png">-->
+                <p class="subtitle"></p>
+                <div class="content">
+                    <!-- Content -->
+                    <a id="btn-logout" href="/api/logout">退出</a>
+                </div>
+            </article>
+        </div>
+        <div class="tile">
+            <div class="tile is-parent is-3" id="nav-panel">
+                <article class="tile is-child is-vertical">
+                    <div class="item inactive" th:each="item:${awardsList}">
+                        <div class="item-title"><span th:text="${item.name}">X等奖</span><div class="icon"></div></div>
+                        <div class="sub-item" th:each="item1:${item.list}" th:class="'sub-item '+${item1.topic}" th:attr="data-id=${item1.id}">
+                            <span th:text="${item1.prize}">奖品</span><span th:text="${item1.quantity}+'名'" style="float: right;">x</span>
+                        </div>
+                    </div>
+                    <div id="btn-add-awards"><button class="button">增加奖项</button></div>
+                </article>
+            </div>
+            <div class="tile is-parent is-vertical" id="right-content-area">
+                <div id="action-area" class="has-text-centered">
+                    <button class="button not-show" id="btn-start">开始抽奖</button>
+                    <button class="button not-show" id="btn-stop">停</button>
+                    <a href="javascript:void(0);" id="btn-download">下载中奖名单</a>
+                </div>
+                <div class="tile" id="winners-container">
+<!--                    <div class="item-winner"><strong>XXX</strong><br/>BGIxxx</div>-->
+<!--                    <div class="item-winner"><strong>XXX</strong><br/>BGIxxx</div>-->
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">增加奖项</p>
+        </header>
+        <section class="modal-card-body">
+            <form>
+                <div class="field">
+                    <label class="label">奖项</label>
+                    <div class="control">
+                        <input class="input is-success" name="awards" type="text" placeholder="X等奖">
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">奖品</label>
+                    <div class="control">
+                        <input class="input is-success" name="prize" type="text" placeholder="输入奖品">
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">数量</label>
+                    <div class="control">
+                        <input class="input is-success" name="quantity" type="text" placeholder="输入数字">
+                    </div>
+                </div>
+            </form>
+        </section>
+        <footer class="modal-card-foot">
+            <button id="btn-save-add" class="button">保 存</button>
+            <button id="btn-cancel-add" class="button">取 消</button>
+        </footer>
+    </div>
+</div>
+
+</body>
+
+<script type="application/javascript">
+    (function($){
+        let Evn = {current:{stop:false}};
+        Evn.current.realList=[];
+
+        Evn.roundLottery = function(){
+            if(Evn.current.stop==true){
+                if(Evn.current.realList.length>0){
+                    var realList = Evn.current.realList;
+                    var html = '';
+                    for(var i=0;i<realList.length; i++){
+                        var user = realList[i];
+                        html = html+'<div class="item-winner"><div>'+user.realName+'</div><div>'+user.workNo+'</div></div>';
+                    }
+                    $("#winners-container").html(html);
+                    Evn.current.realList=[];
+                }
+                return;
+            }
+            const list = Evn.current.list;
+            let idx=Evn.current.idx;
+            let lmax=list.length;
+            let items= $(".item-winner");
+            for(i=0;i<items.length; i++){
+                let html='<div>'+list[idx].realName+'</div><div>'+list[idx].workNo+'</div>';
+                $(items[i]).html(html);
+                idx++;
+                if(idx>=lmax){
+                    idx=0;
+                }
+            }
+            Evn.current.idx=idx;
+            setTimeout(Evn.roundLottery, 100);
+        }
+
+        Evn.startLottery= function(){
+            $.ajax({
+                url:"/api/lottery/findUserForLottery",
+                method:"post",
+                success: function (res){
+                    if(!res.success){
+                        alert(res.message);
+                        return;
+                    }
+                    let list = res.data;
+                    Evn.current.list=list;
+                    Evn.current.idx=0;
+                    Evn.current.stop=false;
+                    Evn.roundLottery();
+                    $("#btn-stop").removeClass("not-show");
+                }
+            });
+        }
+
+        Evn.realLotterty= function(awardsId){
+            $.ajax({
+                url:"/api/lottery/doLottery",
+                method:"post",
+                data: {
+                    awardsId:awardsId,
+                },
+                success: function (res){
+                    if(!res.success){
+                        alert(res.message);
+                        return;
+                    }
+                    $("#btn-start").addClass("not-show");
+                    $("#btn-stop").addClass("not-show");
+                    let list = res.data;
+                    ///
+                    Evn.current.realList=list;
+                    $(".sub-item[data-id="+awardsId+"]").removeClass("not-start").addClass("finish");
+                    Evn.current.stop=true;
+                }
+            });
+        }
+
+        Evn.fetchWinners= function(awardsId){
+            Evn.current.stop=true;
+            Evn.currAwardId=awardsId;
+            $.ajax({
+                url:"/api/lottery/findUserByAwards",
+                method:"post",
+                data:{
+                    awardsId:awardsId
+                },
+                success: function (res){
+                    if(!res.success){
+                        alert(res.message);
+                        return;
+                    }
+                    $("#btn-start").addClass("not-show");
+                    $("#btn-stop").addClass("not-show");
+                    let list = res.data.winners;
+                    var html = '';
+                    if(list.length==0){//尚未抽奖
+                        $("#btn-start").removeClass("not-show");
+                        for(var i=0;i<res.data.awards.quantity; i++) {
+                            html = html+'<div class="item-winner"><div>敬请期待</div><div>——</div></div>';
+                        }
+                    }else{//已抽奖
+                        for(var i=0;i<list.length; i++){
+                            var user = list[i];
+                            html = html+'<div class="item-winner"><div>'+user.realName+'</div><div>'+user.workNo+'</div></div>';
+                        }
+                    }
+                    $("#winners-container").html(html);
+                }
+            });
+        }
+
+        $(".item-title").bind("click", function(){
+            if($(this).parent().hasClass("active")){
+                $(this).parent().removeClass("active").addClass("inactive");
+                return;
+            }
+            if($(this).parent().hasClass("inactive")){
+                $(this).parent().removeClass("inactive").addClass("active");
+                return;
+            }
+        });
+
+        $(".sub-item").bind("click", function(){
+            $(".sub-item.active").removeClass("active");
+            $(this).addClass("active");
+            let id = $(this).attr("data-id");
+            Evn.fetchWinners(id);
+        });
+
+        $("#btn-start").bind("click", function(){
+            $("#btn-start").addClass("not-show");
+            Evn.startLottery();
+        });
+        $("#btn-stop").bind("click", function(){
+            $("#btn-stop").addClass("not-show");
+            Evn.realLotterty(Evn.currAwardId);
+        });
+        $("#btn-add-awards").bind("click", function(){
+            $(".modal").addClass("is-active");
+        });
+        $("#btn-cancel-add").bind("click", function(){
+            $(".modal").removeClass("is-active");
+        });
+        $("#btn-save-add").bind("click", function(){
+            let awards=$("form input[name=awards]").val();
+            let prize=$("form input[name=prize]").val();
+            let quantity=$("form input[name=quantity]").val();
+            $.ajax({
+                url: "/api/lottery/addAwards",
+                method: "post",
+                data: {
+                    awards: awards,
+                    prize:prize,
+                    quantity:quantity,
+                },
+                success: function (res) {
+                    if(!res.success){
+                        alert(res.message);
+                        return;
+                    }
+                    window.location.reload();
+                }
+            });
+        });
+        $("#btn-download").bind("click", function(){
+            if(!Evn.currAwardId){
+                alert("请选择奖项后,再下载中奖名单");
+                return;
+            }
+            $.ajax({
+                url: "/api/lottery/isFinish",
+                method: "post",
+                data: {
+                    awardsId: Evn.currAwardId,
+                },
+                success: function (res) {
+                    if(!res.success){
+                        alert(res.message);
+                        return;
+                    }
+                    if(res.data!=true){
+                        alert("该奖项尚未抽奖");
+                        return;
+                    }
+                    window.open("/api/lottery/downloadWinner?awardsId="+Evn.currAwardId, "_blank");
+                }
+            });
+        });
+    })(jQuery);
+</script>
+</html>

@@ -1,0 +1,175 @@
+.sub-item.finish{
+    color: #6C6C6C;
+    text-decoration: line-through;
+}
+.sub-item.not-start{
+    color: #000000;
+}
+.sub-item.active{
+    color: #EC0707;
+    font-weight: bold;
+    position: relative;
+    left: 0.5em;
+    top: -0.1em;
+}
+
+.item{
+    margin: 1em 2em;
+    /*background: linear-gradient(225deg, #F7B500 0%, #B620E0 51%, #32C5FF 100%);*/
+    background: linear-gradient(225deg, #D3DEF4 0%, #EEBDEC 51%, #FCDEBC 100%);
+    border-radius: 24px;
+}
+.item.inactive .sub-item{
+    display: none;
+}
+.sub-item{
+    margin: 0em 1em 0em 1em;
+    padding: 0.4em 1em 0.8em 1em;
+}
+.item-title{
+    font-size: large;
+    font-weight: bolder;
+    text-align: center;
+    padding: 0.5em ;
+    color: #ffffff;
+    background: linear-gradient(225deg, #32C5FF 0%, #B620E0 51%, #F7B500 100%);
+    opacity: 1.0;
+    border-radius: 24px;
+
+    /*background-image: url("/img/lottery/btn-awards.png");*/
+    /*background-size: cover;*/
+    /*background-repeat: no-repeat;*/
+}
+#action-area{
+    height: 4em;
+    padding-top: 1em;
+}
+#right-content-area{
+    background: linear-gradient(315deg, #F15C95 0%, #FFF0C5 100%);
+}
+.item-winner{
+    margin: 0.5em;
+    width: 7em;
+    background-color: #a5d0f0;
+    text-align: center;
+    line-height: 1.2em;
+    border-radius: 8px;
+    background-image: url(/img/lottery/icon-prize.png);
+    background-size: 2.4em;
+    background-repeat: no-repeat;
+    background-position-y: 0.8em;
+    background-position-x: center;
+    padding-top: 4em;
+    padding-bottom: 1em;
+    line-height: 1.6em;
+    background-color: #FFEFEF;
+    font-weight: bolder;
+}
+
+.item-winner div{
+    text-wrap: nowrap;
+    text-overflow: ellipsis;
+    width: 7em;
+    overflow: hidden;
+}
+#winners-container{
+    text-align: center;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    padding: 1em;
+}
+#top-panel{
+    height: 150px;
+}
+#nav-panel{
+    min-height: calc(100vh - 150px);
+    background-color: #FFEEF2;
+}
+#nav-panel article{
+    border-top-left-radius: 2em;
+    border-top-right-radius: 1em;
+}
+.not-show{
+    display: none;
+    /*visibility: hidden;*/
+}
+#btn-start, #btn-stop{
+    width: 12em;
+    background: linear-gradient(225deg, #E0206A 0%, #F7B500 100%);
+    border-radius: 40px;
+    color: #ffffff;
+    font-size: larger;
+    font-family: FZLTCHJW--GB1, FZLTCHJW--GB1;
+    font-weight: bolder;
+}
+.item-title .icon{
+    width: 2em;
+    height: 2em;
+    background-size: 1.4em;
+    background-repeat: no-repeat;
+    background-position-y: 0.1em;
+    float: right;
+}
+.item.inactive .item-title .icon {
+    background-image: url("/img/lottery/icon-expand.png");
+}
+.item.active .item-title .icon{
+    background-image: url("/img/lottery/icon-fold-up.png");
+}
+#btn-add-awards{
+    text-align: center;
+}
+#btn-add-awards button{
+    margin: 1em;
+    width: 8em;
+    background-color: #32C5FF;
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: large;
+    font-family: FZLTCHJW--GB1, FZLTCHJW--GB1;
+    height: 2em;
+}
+#btn-save-add{
+    background-color: #32C5FF;
+    margin-right: 1em;
+    color: #ffffff;
+}
+#top-panel article{
+    background-image: url("/img/lottery/banner-lottery01.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 120px;
+}
+#img-logo{
+    margin-top: 0.5em;
+    width: 7em;
+}
+#btn-download{
+    float: right;
+    margin-right: 2em;
+    display: block;
+    line-height: 2.5em;
+    background-image: url("/img/lottery/icon-download.png");
+    background-size: 1em;
+    background-repeat: no-repeat;
+    background-position-y: 0.94em;
+    padding-left: 1.2em;
+    color: #BB0954;
+    font-size: larger;
+    font-family: SourceHanSansSC, SourceHanSansSC;
+    font-weight: bolder;
+}
+.tile.is-ancestor{
+    margin-top: 0 !important;
+}
+#btn-logout{
+    position: absolute;
+    top: 1em;
+    right: 2em;
+    text-decoration: none;
+    color: aliceblue;
+}

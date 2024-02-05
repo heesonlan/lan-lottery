@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录</title>
+    <style>
+        body {
+            background: url('/img/bg-login.jpg') no-repeat;
+            background-size: 100% 130%;
+        }
+
+        #login_box {
+            width: 20%;
+            height: 400px;
+            background-color: #00000060;
+            margin: auto;
+            margin-top: 10%;
+            text-align: center;
+            border-radius: 10px;
+            padding: 50px 50px;
+        }
+
+        h2 {
+            color: #ffffff90;
+            margin-top: 5%;
+        }
+
+        #input-box {
+            margin-top: 5%;
+        }
+
+        span {
+            color: #fff;
+        }
+
+        input {
+            border: 0;
+            width: 60%;
+            font-size: 15px;
+            color: #fff;
+            background: transparent;
+            border-bottom: 2px solid #fff;
+            padding: 5px 10px;
+            outline: none;
+            margin-top: 10px;
+        }
+
+        button {
+            margin-top: 50px;
+            width: 60%;
+            height: 30px;
+            border-radius: 10px;
+            border: 0;
+            color: #fff;
+            text-align: center;
+            line-height: 30px;
+            font-size: 15px;
+            background-image: linear-gradient(to right, #30cfd0, #330867);
+        }
+
+        #sign_up {
+            margin-top: 45%;
+            margin-left: 60%;
+        }
+
+        a {
+            color: #b94648;
+        }
+        #img-logo{
+            position: absolute;
+            top:20px;
+            left: 20px;
+        }
+    </style>
+</head>
+
+<body>
+<div id="login_box">
+<!--    <img id="img-logo" src="/img/logo2x.png" width="180">-->
+    <h2>登录</h2>
+    <div id="input_box">
+        <input type="text" name="username" placeholder="请输入用户名" value="lan">
+    </div>
+    <div class="input_box">
+        <input type="password" name="password" placeholder="请输入密码" value="123">
+    </div>
+    <button id="btn-login">登录</button><br>
+</div>
+</body>
+<script src="/js/jquery.min.js"></script>
+<script type="application/javascript">
+    (function($){
+        $("#btn-login").bind("click", function(){
+            let username = $("input[name=username]").val();
+            let password = $("input[name=password]").val();
+            if(!username || !password || username==undefined || password==undefined || username=='' || password==''){
+                alert("请输入用户名和密码");
+                return false;
+            }
+            $.ajax({
+                url:"/login",
+                method:"post",
+                data:{
+                    userName:username,
+                    password:password
+                },
+                success:function (res){
+                    if(!res.success){
+                        alert(res.message);
+                        return false;
+                    }
+                    window.location.href="/api/lottery/index";
+                }
+            })
+        });
+    })(jQuery);
+</script>
+</html>
