@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,7 @@ public class LotteryController {
     @PostMapping("api/lottery/findUserForLottery")
     public MSG findUserForLottery(){
         List<LotteryUser> list = lotteryUserService.findUserForLottery();
+        Collections.shuffle(list);
         return MSG.success(list);
     }
 
